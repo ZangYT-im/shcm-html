@@ -32,13 +32,13 @@
                 </div>
 
                 <div style="height: 5px"></div>
-                <el-input placeholder="请输入验证码" v-model="form.code">
+                <el-input placeholder="验证码暂时固定为123456" v-model="form.code">
                 </el-input>
                 <div style="text-align: center; color: #8c939d;margin: 5px 0">未注册的手机号码验证后自动创建账户</div>
                 <el-button @click="login" style="width: 100%; background-color:#3cb5ff; color: #fff;">登录</el-button>
                 <h4>如果是电脑端浏览，可以按f12打开移动端模式</h4>
                 <h4>@auth ZangYt</h4>
-                <h4>@desc 为演示方便，后端存放在redis随机生成的6位验证码暂时固定为666666</h4>
+                <h4>@desc 为演示方便，后端存放在redis随机生成的6位验证码暂时固定为123456</h4>
                 <h4>目前已实现的功能:</h4>
                 <h4>- 注册登录</h4>
                 <h4>- 高并发抢券下单</h4>
