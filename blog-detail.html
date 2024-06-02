@@ -85,48 +85,36 @@
     <div class="blog-divider"></div>
     <div class="blog-comments">
       <div class="comments-head">
-        <div>网友评价 <span>（119）</span></div>
+        <div>网友评价 </div>
         <div><i class="el-icon-arrow-right"></i></div>
       </div>
+
       <div class="comment-list">
-        <div class="comment-box" v-for="i in 3" :key="i">
+<!--        <div class="comment-box" v-for="i in 3" :key="i">-->
+        <div class="comment-box" v-for="comment in commentsList" :key="comment.id">
           <div class="comment-icon">
             <img
-                src="https://p0.meituan.net/userheadpicbackend/57e44d6eba01aad0d8d711788f30a126549507.jpg%4048w_48h_1e_1c_1l%7Cwatermark%3D0"
-                alt="">
+              :src="blog.icon || '/imgs/icons/default-icon.png'"
+              alt="">
           </div>
           <div class="comment-info">
-            <div class="comment-user">叶小乙 <span>Lv5</span></div>
+            <div class="comment-user">{{ comment.nickName }}</div>
             <div style="display: flex;">
               打分
-              <el-rate disabled v-model="4.5"></el-rate>
+              <el-rate disabled v-model="comment.liked"></el-rate>
             </div>
             <div style="padding: 5px 0; font-size: 14px">
-              某平台上买的券，价格可以当工作餐吃，虽然价格便宜，但是这家店一点都没有...
+              {{comment.content}}
             </div>
-            <div class="comment-images">
-              <img
-                  src="https://qcloud.dpfile.com/pc/6T7MfXzx7USPIkSy7jzm40qZSmlHUF2jd-FZUL6WpjE9byagjLlrseWxnl1LcbuSGybIjx5eX6WNgCPvcASYAw.jpg"
-                  alt="">
-              <img
-                  src="https://qcloud.dpfile.com/pc/sZ5q-zgglv4VXEWU71xCFjnLM_jUHq-ylq0GKivtrz3JksWQ1f7oBWZsxm1DWgcaGybIjx5eX6WNgCPvcASYAw.jpg"
-                  alt="">
-              <img
-                  src="https://qcloud.dpfile.com/pc/xZy6W4NwuRFchlOi43DVLPFsx7KWWvPqifE1JTe_jreqdsBYA9CFkeSm2ZlF0OVmGybIjx5eX6WNgCPvcASYAw.jpg"
-                  alt="">
-              <img
-                  src="https://qcloud.dpfile.com/pc/xZy6W4NwuRFchlOi43DVLPFsx7KWWvPqifE1JTe_jreqdsBYA9CFkeSm2ZlF0OVmGybIjx5eX6WNgCPvcASYAw.jpg"
-                  alt="">
-            </div>
-            <div>
-              浏览641 &nbsp;&nbsp;&nbsp;&nbsp;评论5
-            </div>
+<!--            <div>-->
+<!--              浏览641 &nbsp;&nbsp;&nbsp;&nbsp;评论5-->
+<!--            </div>-->
           </div>
         </div>
         <div
             style="display: flex; justify-content: space-between;padding: 15px 0; border-top: 1px solid #f1f1f1; margin-top: 10px;">
-          <div>查看全部119条评价</div>
-          <div><i class="el-icon-arrow-right"></i></div>
+<!--          <div>查看全部119条评价</div>-->
+<!--          <div><i class="el-icon-arrow-right"></i></div>-->
         </div>
       </div>
     </div>
@@ -144,9 +132,10 @@
     <div style="width: 40%">
     </div>
     <div class="foot-box">
-      <div class="foot-view"><i class="el-icon-chat-square"></i></div>
+      <div class="foot-view"><i class="el-icon-chat-square"   @click="dialogVisible = true"></i></div>
     </div>
   </div>
+  <el-button type="text" @click="dialogVisible = true">点击打开 Dialog</el-button>
 </div>
 <script src="./js/vue.js"></script>
 <script src="./js/axios.min.js"></script>
@@ -162,6 +151,7 @@
   const app = new Vue({
     el: "#app",
     data: {
+      dialogVisible: false,
       util,
       blog: {},
       shop: {},
@@ -182,11 +172,13 @@
         y: 0
       },
       sensitivity: 60,
-      resistance: 0.3
+      resistance: 0.3,
+      commentsList:[]
     },
     created() {
       let id = util.getUrlParam("id");
       this.queryBlogById(id);
+      this.queryCommentsListByBlogId(id);
     },
     methods: {
       init() {
@@ -197,6 +189,7 @@
         this.updateItemWidth()
         this.setTransform()
         this.setTransition('none')
+
       },
       goBack() {
         history.back();
@@ -207,6 +200,12 @@
         }else{
           location.href = "/other-info.html?id=" + this.blog.userId
         }
+      },
+      queryCommentsListByBlogId(id){
+        axios.get("/blog-comments/queryCommentsListByBlogId/" + id)
+          .then(({data}) => {
+            this.commentsList = data;
+            })
       },
       queryBlogById(id) {
         axios.get("/blog/" + id)
