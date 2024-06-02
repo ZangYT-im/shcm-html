@@ -94,7 +94,7 @@
         <div class="comment-box" v-for="comment in commentsList" :key="comment.id">
           <div class="comment-icon">
             <img
-              :src="blog.icon || '/imgs/icons/default-icon.png'"
+              :src="comment.icon || '/imgs/icons/default-icon.png'"
               alt="">
           </div>
           <div class="comment-info">
@@ -119,8 +119,17 @@
       </div>
     </div>
     <div class="blog-divider"></div>
+    <el-input
+      type="textarea"
+      :rows="2"
+      placeholder="请输入评论"
+      v-model="comment.content">
+    </el-input>
+ <el-rate  v-model="comment.liked" ></el-rate></span>
   </div>
+
   <div class="foot">
+
     <div class="foot-box">
       <div class="foot-view"  @click="addLike()">
         <svg t="1646634642977" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2187" width="26" height="26">
@@ -131,11 +140,12 @@
     </div>
     <div style="width: 40%">
     </div>
-    <div class="foot-box">
-      <div class="foot-view"><i class="el-icon-chat-square"   @click="dialogVisible = true"></i></div>
+    <div class="foot-box" @click="submitComment()">
+      <div class="foot-view"><i class="el-icon-chat-square"></i><span style="position: relative;top: -6px">发表评论</span></div>
     </div>
   </div>
-  <el-button type="text" @click="dialogVisible = true">点击打开 Dialog</el-button>
+
+
 </div>
 <script src="./js/vue.js"></script>
 <script src="./js/axios.min.js"></script>
@@ -151,6 +161,11 @@
   const app = new Vue({
     el: "#app",
     data: {
+      comment:{
+        liked: 5,
+        blogId:'',
+        content:'',
+      },
       dialogVisible: false,
       util,
       blog: {},
@@ -179,6 +194,7 @@
       let id = util.getUrlParam("id");
       this.queryBlogById(id);
       this.queryCommentsListByBlogId(id);
+      this.comment.blogId = id;
     },
     methods: {
       init() {
@@ -190,6 +206,12 @@
         this.setTransform()
         this.setTransition('none')
 
+      },
+      submitComment(){
+        data = this.comment
+        axios.post("/blog-comments/saveComments", data)
+          .then(resp =>  window.location.reload())
+          .catch(this.$message.error)
       },
       goBack() {
         history.back();
